@@ -3,7 +3,7 @@
 import os
 from distutils.core import setup
 
-version = '1.60'
+version = '1.61'
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -25,7 +25,7 @@ long_desc = open(root_dir + '/README').read()
 setup(
     name='django-treebeard',
     version=version,
-    url='http://code.tabo.pe/django-treebeard/',
+    url='https://tabo.pe/projects/django-treebeard/',
     author='Gustavo Picon',
     author_email='tabo@tabo.pe',
     license='Apache License 2.0',
