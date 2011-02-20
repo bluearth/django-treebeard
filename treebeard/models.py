@@ -13,6 +13,26 @@ from treebeard.exceptions import InvalidPosition, MissingNodeOrderBy
 class Node(models.Model):
     "Node class"
 
+    def create_node_type(cls, **kwargs):
+        """
+        Factory method used by subclasses to instantiate Node. The actual node type to be
+        created is determined by the type of subclass. Or, it can also be overriden by
+        passing 'type' kwarg. The node type added must be a subclass of treebeard.Node
+
+        :param \*\*kwargs: object creation data. If 'type' kwarg is present, it's consiered
+            as the type to be created. The 'type' kwarg will not be passed to object creation.
+        :returns: the created node object. Initialized with creation data but not yet save()d
+        """
+        if kwargs.has_key('type'):
+            klass = kwargs['type']
+            assert issubclass(klass, Node.__class__), u'Can only add node descended from treebeard.Node'
+            kwargs.pop('type')
+            newobj = klass(**kwargs)
+        else:           
+            newobj = cls.__class__(**kwargs)
+
+        return newobj
+
     @classmethod
     def add_root(cls, **kwargs):  # pragma: no cover
         """

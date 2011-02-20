@@ -9,6 +9,7 @@ from django.db import models, transaction, connection
 from treebeard.models import Node
 from treebeard.exceptions import InvalidMoveToDescendant
 
+from polymorphic import PolymorphicManager
 
 class NS_NodeQuerySet(models.query.QuerySet):
     """
@@ -71,7 +72,7 @@ class NS_NodeQuerySet(models.query.QuerySet):
         transaction.commit_unless_managed()
 
 
-class NS_NodeManager(models.Manager):
+class NS_NodeManager(PolymorphicManager):
     """ Custom manager for nodes.
     """
 
@@ -169,7 +170,7 @@ class NS_Node(Node):
                                                  self.rgt, False, 2)
 
         # creating a new object
-        newobj = self.__class__(**kwargs)
+        newobj = self.create_node_type(**kwargs)
         newobj.tree_id = self.tree_id
         newobj.depth = self.depth + 1
         newobj.lft = self.lft + 1

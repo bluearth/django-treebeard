@@ -10,6 +10,7 @@ from django.db.models import Q
 from treebeard.models import Node
 from treebeard.exceptions import InvalidMoveToDescendant, PathOverflow
 
+from polymorphic import PolymorphicManager
 
 class MP_NodeQuerySet(models.query.QuerySet):
     """
@@ -75,13 +76,13 @@ class MP_NodeQuerySet(models.query.QuerySet):
         transaction.commit_unless_managed()
 
 
-class MP_NodeManager(models.Manager):
+class MP_NodeManager(PolymorphicManager):
     "Custom manager for nodes."
 
     def get_query_set(self):
+        qset = super(MP_NodeManager, self).get_query_set()
         "Sets the custom queryset as the default."
-        return MP_NodeQuerySet(self.model).order_by('path')
-
+        return qset.order_by('path')
 
 class MP_Node(Node):
     "Abstract model to create your own Materialized Path Trees."
@@ -507,7 +508,7 @@ class MP_Node(Node):
                                                      **kwargs)
 
         # creating a new object
-        newobj = self.__class__(**kwargs)
+        newobj = self.create_node_type(**kwargs)
         newobj.depth = self.depth + 1
         if not self.is_leaf():
             # adding the new child as the last one
